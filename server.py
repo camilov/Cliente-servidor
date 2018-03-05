@@ -46,25 +46,22 @@ def main():
             s.send_json({"result": "OK"})
             print(clientes)
 
-       if msg["op"] == "send":
-             name = msg["file"]
-             s.send_json("Ok")
-             
-       if msg["op"] == "voice":
-            with open(name,"wb") as salida:
-                files= s.recv()        
-                salida.write(files);
 
        if msg["op"] == "audionote":
+            
             sender = msg["sender"]
             dest = msg["dest"]
-            message = msg["message"]
+            #message = msg["message"]
             s.send_json({"resp":"ok"})
-            data = {"sender":sender,"message":message}
+            audio = s.recv_multipart()
+            data = {"sender":sender}
             clientes[dest].send_json(data)
             answer = clientes[dest].recv_json()
-            print(answer)
+            clientes[dest].send_multipart(audio)
+            #answer2 = clientes[dest].recv_json()
+            #print(answer2)
 
+           
                  
       
 if __name__ == '__main__':

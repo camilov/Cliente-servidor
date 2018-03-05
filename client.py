@@ -4,6 +4,7 @@ import pyaudio
 import wave
 
 
+
 CHUNK = 1024
 FORMAT = pyaudio.paInt16
 CHANNELS = 2
@@ -15,12 +16,12 @@ WAVE_OUTPUT_FILENAME = "g.wav"
 
 
 def reproducir(name):
-    name = sys.argv[4]
+    
     if len(sys.argv) < 2:
         print("Plays a wave file.\n\nUsage: %s filename.wav" % sys.argv[0])
         sys.exit(-1)
-
-    wf = wave.open(name, 'rb')
+ 
+    wf = wave.open('g.wav', 'rb')
 
     p = pyaudio.PyAudio()
 
@@ -66,6 +67,7 @@ def grabar():
     stream.close()
     p.terminate()
 
+    return frames
     
 
 
@@ -87,7 +89,7 @@ def main():
     c = context.socket(zmq.REP)
     c.bind("tcp://{}:{}".format(clientAddress,clientPort))
 
-    poller = zmq.Poller()
+    poller = zmq.Poller() 
     poller.register(sys.stdin, zmq.POLLIN)
     poller.register(c, zmq.POLLIN)
   
@@ -96,25 +98,33 @@ def main():
         sockets  = dict(poller.poll())
 
         if c in sockets:
-            data = c.recv()
+            data = c.recv_json()
             print(data)
             c.send_json({"result":"ok"})
+            audio = c.recv_multipart()
+            #print(len(audio))
+            #reproducir(audio)
+            #c.send_json({"result":"ok"})
 
         if sys.stdin.fileno() in  sockets:
-
+           
             command = input()
+            print('Ingrese comando')
             act, *res = command.split(' ',1)
 
             if act == "login":
                 s.send_json({"op":"login","clientAddress":clientAddress,"clientPort":clientPort,"nick":nick})
                 recibe = s.recv_json()
                 print(recibe)
+
             elif act == "audionote":
+                graba = grabar()
                 dest,msg = res[0].split(' ', 2)
-                data = ({"op":"audionote","sender":nick,"dest":dest,"message":msg})               
+                data = ({"op":"audionote","sender":nick,"dest":dest})
                 s.send_json(data)
                 answer = s.recv_json()
-                print(answer)
+                s.send_multipart(graba)
+               
                 
 
 if __name__ == '__main__':

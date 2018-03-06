@@ -16,14 +16,22 @@ WAVE_OUTPUT_FILENAME = "g.wav"
 
 
 def reproducir(name):
-    
-    if len(sys.argv) < 2:
-        print("Plays a wave file.\n\nUsage: %s filename.wav" % sys.argv[0])
-        sys.exit(-1)
- 
-    wf = wave.open('g.wav', 'rb')
-
     p = pyaudio.PyAudio()
+    streamr = p.open(format=FORMAT,
+                channels=CHANNELS,
+                rate=RATE,
+                input=True,
+                frames_per_buffer=CHUNK)
+    
+    wf = wave.open(WAVE_OUTPUT_FILENAME, 'wb')
+    wf.setnchannels(CHANNELS)
+    wf.setsampwidth(p.get_sample_size(FORMAT))
+    wf.setframerate(RATE)
+    wf.writeframes(b''.join(name))
+    wf.close()
+
+ 
+    wf = wave.open('g.wav', 'rb')   
 
     stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
                     channels=wf.getnchannels(),
@@ -40,6 +48,7 @@ def reproducir(name):
     stream.close()
 
     p.terminate()
+
 
 
 def grabar():
@@ -102,9 +111,9 @@ def main():
             print(data)
             c.send_json({"result":"ok"})
             audio = c.recv_multipart()
-            #print(len(audio))
-            #reproducir(audio)
-            #c.send_json({"result":"ok"})
+            s.send_json({"result":"ok"})
+            reproducir(audio)
+            
 
         if sys.stdin.fileno() in  sockets:
            
@@ -124,6 +133,7 @@ def main():
                 s.send_json(data)
                 answer = s.recv_json()
                 s.send_multipart(graba)
+                answer2 = s.recv_json()
                
                 
 

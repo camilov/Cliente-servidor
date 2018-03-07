@@ -59,7 +59,6 @@ def main():
             answer = clientes[dest].recv_json()
             clientes[dest].send_multipart(audio)
             answer2 = clientes[dest].recv_json()
-
            
                  
       

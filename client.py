@@ -13,40 +13,21 @@ RECORD_SECONDS = 5
 WAVE_OUTPUT_FILENAME = "g.wav"
 
 
-
-
 def reproducir(name):
+   
     p = pyaudio.PyAudio()
-    streamr = p.open(format=FORMAT,
-                channels=CHANNELS,
-                rate=RATE,
-                input=True,
-                frames_per_buffer=CHUNK)
-    
-    wf = wave.open(WAVE_OUTPUT_FILENAME, 'wb')
-    wf.setnchannels(CHANNELS)
-    wf.setsampwidth(p.get_sample_size(FORMAT))
-    wf.setframerate(RATE)
-    wf.writeframes(b''.join(name))
-    wf.close()
+    stream = p.open(format=FORMAT,
+                    channels=CHANNELS,
+                    rate=RATE,
+                    output=True,
+                    )
 
- 
-    wf = wave.open('g.wav', 'rb')   
-
-    stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
-                    channels=wf.getnchannels(),
-                    rate=wf.getframerate(),
-                    output=True)
-
-    data = wf.readframes(CHUNK)
-
-    while data != '':
+    for data in name:    
         stream.write(data)
-        data = wf.readframes(CHUNK)
+        
 
     stream.stop_stream()
     stream.close()
-
     p.terminate()
 
 
@@ -66,6 +47,7 @@ def grabar():
 
     frames = []
 
+        
     for i in range(0, int(RATE / CHUNK * RECORD_SECONDS)):
         data = stream.read(CHUNK)
         frames.append(data)
@@ -113,7 +95,8 @@ def main():
             audio = c.recv_multipart()
             s.send_json({"result":"ok"})
             reproducir(audio)
-            
+
+                    
 
         if sys.stdin.fileno() in  sockets:
            

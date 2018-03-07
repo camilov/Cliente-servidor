@@ -56,10 +56,10 @@ def main():
             s.send_json({"resp":"ok"})
             data = {"sender":sender}
             clientes[dest].send_json(data)
-            answer = clientes[dest].recv_json()
+            respuesta = clientes[dest].recv_json()
             clientes[dest].send_multipart(audio)
-            answer2 = clientes[dest].recv_json()
-           
+            respuestaAudio = clientes[dest].recv_json()
+      
                  
       
 if __name__ == '__main__':

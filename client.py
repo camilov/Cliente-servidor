@@ -13,7 +13,7 @@ RECORD_SECONDS = 5
 WAVE_OUTPUT_FILENAME = "g.wav"
 
 
-def reproducir(name):
+def reproducir(frames):
    
     p = pyaudio.PyAudio()
     stream = p.open(format=FORMAT,
@@ -22,13 +22,15 @@ def reproducir(name):
                     output=True,
                     )
 
-    for data in name:    
+    for data in frames:    
         stream.write(data)
         
 
     stream.stop_stream()
     stream.close()
     p.terminate()
+
+    print("termino")
 
 
 
@@ -47,7 +49,7 @@ def grabar():
 
     frames = []
 
-        
+    print(int(RATE / (CHUNK * RECORD_SECONDS)))    
     for i in range(0, int(RATE / CHUNK * RECORD_SECONDS)):
         data = stream.read(CHUNK)
         frames.append(data)
@@ -110,14 +112,14 @@ def main():
                 print(recibe)
 
             elif act == "audionote":
-                graba = grabar()
+                voz = grabar()
                 dest,msg = res[0].split(' ', 2)
                 data = ({"op":"audionote","sender":nick,"dest":dest})
                 s.send_json(data)
-                answer = s.recv_json()
-                s.send_multipart(graba)
-                answer2 = s.recv_json()
-               
+                respuesta = s.recv_json()
+                s.send_multipart(voz)
+                respuestaPart = s.recv_json()
+            
                 
 
 if __name__ == '__main__':

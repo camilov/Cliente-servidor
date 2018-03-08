@@ -49,10 +49,12 @@ def grabar():
 
     frames = []
 
-    print(int(RATE / (CHUNK * RECORD_SECONDS)))    
-    for i in range(0, int(RATE / CHUNK * RECORD_SECONDS)):
+    
+    tiempo = int(RATE / CHUNK * RECORD_SECONDS)
+    for i in range(0, tiempo):   
         data = stream.read(CHUNK)
         frames.append(data)
+        
 
     print("* done recording")
 
@@ -62,7 +64,8 @@ def grabar():
 
     return frames
     
-
+def ec(str):
+    return str.encode(encoding="ascii")
 
 def main():
     if len(sys.argv) < 4:
@@ -91,11 +94,8 @@ def main():
         sockets  = dict(poller.poll())
 
         if c in sockets:
-            data = c.recv_json()
-            print(data)
-            c.send_json({"result":"ok"})
-            audio = c.recv_multipart()
-            s.send_json({"result":"ok"})
+            sender, *audio = c.recv_multipart()
+            c.send(b"ok")
             reproducir(audio)
 
                     
@@ -107,18 +107,18 @@ def main():
             act, *res = command.split(' ',1)
 
             if act == "login":
-                s.send_json({"op":"login","clientAddress":clientAddress,"clientPort":clientPort,"nick":nick})
-                recibe = s.recv_json()
-                print(recibe)
+                data = [b"login", ec(clientAddress),ec(clientPort),ec(nick)]
+                s.send_multipart(data)
+                s.recv()
 
             elif act == "audionote":
                 voz = grabar()
                 dest,msg = res[0].split(' ', 2)
-                data = ({"op":"audionote","sender":nick,"dest":dest})
-                s.send_json(data)
-                respuesta = s.recv_json()
-                s.send_multipart(voz)
-                respuestaPart = s.recv_json()
+                data = [b"audionote", ec(nick), ec(dest)]
+                s.send_multipart(data+voz)
+                respuesta= s.recv()
+
+                
             
                 
 

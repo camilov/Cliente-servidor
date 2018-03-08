@@ -97,8 +97,7 @@ def main():
             sender, *audio = c.recv_multipart()
             c.send(b"ok")
             reproducir(audio)
-
-                    
+                                
 
         if sys.stdin.fileno() in  sockets:
            

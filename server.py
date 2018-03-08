@@ -6,14 +6,7 @@ import math
 def dc(s):
     return s.decode("ascii")
 
-def loadFiles(path):
-    files = {}
-    dataDir = os.fsencode(path)
-    for file in os.listdir(dataDir):
-        filename = os.fsdecode(file)
-        print("loading {}".format(filename))
-        files[filename] = files
-    return files
+
         
 def main():
     if len(sys.argv) != 2:
@@ -26,10 +19,6 @@ def main():
     context = zmq.Context()
     s = context.socket(zmq.REP)
     s.bind("tcp://*:{}".format(port))##crea el socket
-
-
-
-    
 
     clientes= {}
 

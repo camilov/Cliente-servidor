@@ -10,7 +10,7 @@ FORMAT = pyaudio.paInt16
 CHANNELS = 2
 RATE = 44100
 RECORD_SECONDS = 5
-WAVE_OUTPUT_FILENAME = "g.wav"
+
 
 
 def reproducir(frames):
@@ -63,9 +63,12 @@ def grabar():
     p.terminate()
 
     return frames
+
     
 def ec(str):
     return str.encode(encoding="ascii")
+
+
 
 def main():
     if len(sys.argv) < 4:

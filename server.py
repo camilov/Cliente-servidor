@@ -26,7 +26,6 @@ def main():
     while True:
        op, *msg = s.recv_multipart()
        print(op)
-       #print(msg)
 
        if op == b"login":
             clientAddress,clientPort,nickname = msg

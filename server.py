@@ -55,7 +55,12 @@ def main():
             clientes[dest].send_multipart(data)
             respuestaAudio = clientes[dest].recv()
             print(respuestaAudio)
-                 
-      
+    
+       if op == b"call":
+            sender, dest = msg
+            s.send(b"ok")
+            data = [sender]
+            clientes[dest].send_multipart(data)
+        
 if __name__ == '__main__':
     main()

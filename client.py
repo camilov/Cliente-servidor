@@ -2,6 +2,8 @@ import zmq
 import sys
 import pyaudio
 import wave
+import time
+import threading
 
 
 WIDTH = 2
@@ -31,7 +33,6 @@ def wire():
 
     print("* done")
 
-    return data
 
     stream.stop_stream()
     stream.close()
@@ -74,8 +75,8 @@ def reproducir(frames):
                     output=True,
                     )
 
-    for data in frames:    
-        stream.write(data)
+    #for data in frames:    
+    stream.write(data)
         
 
     stream.stop_stream()
@@ -97,24 +98,25 @@ def grabar():
                     input=True,
                     frames_per_buffer=CHUNK)
 
-    print("* recording")
+    
 
-    frames = []
+    #frames = []
 
     
-    tiempo = int(RATE / CHUNK * RECORD_SECONDS)
-    for i in range(0, tiempo):   
+    #tiempo = int(RATE / CHUNK * RECORD_SECONDS)
+    #for i in range(0, tiempo):   
+    while True:
         data = stream.read(CHUNK)
-        frames.append(data)
+        #frames.append(data)
         
 
-    print("* done recording")
+    
 
     stream.stop_stream()
     stream.close()
     p.terminate()
 
-    return frames
+    #return data
     
 def ec(str):
     return str.encode(encoding="ascii")
@@ -170,8 +172,14 @@ def main():
                 s.send_multipart(data+voz)
                 respuesta= s.recv()
 
+            elif act == "call":
                 
-            
+                dest, msg = res[0].split(' ',2)
+                envio = [b"conectar" , ec(nick), ec(dest)]
+                s.send_multipart(envio)
+                respuesta = s.recv()
+                
+                            
                 
 
 if __name__ == '__main__':

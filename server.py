@@ -37,7 +37,6 @@ def main():
     while True:
        op, *msg = s.recv_multipart()
        print(op)
-       #print(msg)
 
        if op == b"login":
             clientAddress,clientPort,nickname = msg
@@ -57,10 +56,18 @@ def main():
             print(respuestaAudio)
     
        if op == b"call":
-            sender, dest = msg
+            sender, dest,*nothing = msg
             s.send(b"ok")
-            data = [sender]
+            data = [b"Conectar",sender,dest]
             clientes[dest].send_multipart(data)
-        
+            respuestaCliente = clientes[dest].recv()
+            print(respuestaCliente)
+
+       if op == b"Conectado":
+            dest, *data = msg
+            s.send(b"ok")
+            clientes[dest].send_multipart(msg)
+            respuesta = clientes[dest].recv()
+            print(respuesta)
 if __name__ == '__main__':
     main()

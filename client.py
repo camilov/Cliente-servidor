@@ -15,58 +15,8 @@ RECORD_SECONDS = 5
 WAVE_OUTPUT_FILENAME = "g.wav"
 
 
-def wire():
-    p = pyaudio.PyAudio()
 
-    stream = p.open(format=p.get_format_from_width(WIDTH),
-                channels=CHANNELS,
-                rate=RATE,
-                input=True,
-                output=True,
-                frames_per_buffer=CHUNK)
-
-    print("* recording")
-
-    for i in range(0, int(RATE / CHUNK * RECORD_SECONDS)):
-        data = stream.read(CHUNK)
-        stream.write(data, CHUNK)
-
-    print("* done")
-
-
-    stream.stop_stream()
-    stream.close()
-
-    p.terminate()
-
-
-def wireCallback():
-    p = pyaudio.PyAudio()
-
-    def callback(in_data, frame_count, time_info, status):
-        return (in_data, pyaudio.paContinue)
-
-    stream = p.open(format=p.get_format_from_width(WIDTH),
-                    channels=CHANNELS,
-                    rate=RATE,
-                    input=True,
-                    output=True,
-                    stream_callback=callback)
-
-    stream.start_stream()
-
-    while stream.is_active():
-        time.sleep(0.1)
-
-    stream.stop_stream()
-    stream.close()
-
-    p.terminate()
-
-
-
-
-def reproducir(frames):
+def reproducir(SocketServidor, SocketCliente):
    
     p = pyaudio.PyAudio()
     stream = p.open(format=FORMAT,
@@ -74,9 +24,14 @@ def reproducir(frames):
                     rate=RATE,
                     output=True,
                     )
-
-    #for data in frames:    
-    stream.write(data)
+    while True:
+        op, sender ,dest, *data=  SocketCliente.recv_multipart()
+        if op == b"Conectar":
+            SocketCliente.send(b"ok")
+            grabar(SocketServidor,dest)
+        elif op == b"Conectado":
+            stream.write(data)
+            SocketCliente.send("ok")
         
 
     stream.stop_stream()
@@ -87,7 +42,7 @@ def reproducir(frames):
 
 
 
-def grabar():
+def grabar(SocketServidor,dest):
 
 
     p = pyaudio.PyAudio()
@@ -97,17 +52,13 @@ def grabar():
                     rate=RATE,
                     input=True,
                     frames_per_buffer=CHUNK)
-
-    
-
-    #frames = []
-
-    
-    #tiempo = int(RATE / CHUNK * RECORD_SECONDS)
-    #for i in range(0, tiempo):   
+  
     while True:
+
         data = stream.read(CHUNK)
-        #frames.append(data)
+        print(type(data))
+        enviar = [b"Conectado",dest,data]
+        SocketServidor.send_multipart(enviar)
         
 
     
@@ -116,7 +67,7 @@ def grabar():
     stream.close()
     p.terminate()
 
-    #return data
+    
     
 def ec(str):
     return str.encode(encoding="ascii")
@@ -148,10 +99,11 @@ def main():
         sockets  = dict(poller.poll())
 
         if c in sockets:
-            sender, *audio = c.recv_multipart()
-            c.send(b"ok")
-            reproducir(audio)
-
+            #sender = c.recv_multipart()
+            #c.send(b"ok")
+            #print(sender)
+            #reproducir(audio)
+            reproducir(s,c)
                     
 
         if sys.stdin.fileno() in  sockets:
@@ -175,10 +127,12 @@ def main():
             elif act == "call":
                 
                 dest, msg = res[0].split(' ',2)
-                envio = [b"conectar" , ec(nick), ec(dest)]
+                envio = [b"call" , ec(nick), ec(dest)]
                 s.send_multipart(envio)
                 respuesta = s.recv()
-                
+                reproducir(s,c)
+             
+
                             
                 
 

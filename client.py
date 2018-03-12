@@ -28,7 +28,7 @@ def reproducir(SocketServidor, SocketCliente):
         op, sender ,dest, *data=  SocketCliente.recv_multipart()
         if op == b"Conectar":
             SocketCliente.send(b"ok")
-            grabar(SocketServidor,dest)
+            threading.Thread(target= grabar, args=(SocketServidor, dest)).start()
         elif op == b"Conectado":
             stream.write(data)
             SocketCliente.send("ok")
@@ -132,7 +132,7 @@ def main():
                 respuesta = s.recv()
                 reproducir(s,c)
              
-
+    threading.Thread(target = reproducir, args = (s, c)).start()
                             
                 
 

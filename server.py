@@ -45,22 +45,13 @@ def main():
             clientes[nickname] =csocket 
             s.send(b"ok")
             print(clientes)
-
-
-       if op == b"audionote":
-            sender,dest, *audio = msg
-            s.send(b"ok")
-            data = [sender]+audio
-            clientes[dest].send_multipart(data)
-            respuestaAudio = clientes[dest].recv()
-            print(respuestaAudio)
     
        if op == b"call":
             sender, dest,*nothing = msg
             s.send(b"ok")
             dataMia = [b"Conectar",dest]
             clientes[sender].send_multipart(dataMia)
-            respuestaMia = clientes[dest].recv()
+            respuestaMia = clientes[sender].recv()
             print(respuestaMia)
             dataCliente = [b"Conectar",sender]
             clientes[dest].send_multipart(dataCliente)
@@ -68,11 +59,11 @@ def main():
             print(respuestaCliente)
 
        if op == b"Conectado":
-            dest, *data = msg
-            print(data)
-            s.send(b"ok")
-            datos = [b"Conectado",dest,data]
-            clientes[dest].send_multipart(data)
+            dest,data = msg
+            s.send(b"recibido")
+            print(dest)
+            datos = [b"Conectado",data]
+            clientes[dest].send_multipart(datos)
             respuesta = clientes[dest].recv()
             print(respuesta)
 if __name__ == '__main__':

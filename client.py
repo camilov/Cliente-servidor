@@ -25,15 +25,18 @@ def reproducir(SocketServidor, SocketCliente):
                     output=True,
                     )
     while True:
-        op, sender ,dest, *data=  SocketCliente.recv_multipart()
+        op, client =  SocketCliente.recv_multipart()
         if op == b"Conectar":
             SocketCliente.send(b"ok")
-            grabar(SocketServidor,dest)
-            #threading.Thread(target= grabar, args=(SocketServidor, dest)).start()
+            print("conectando")
+            print(client)
+            #grabar(SocketServidor,client)
+            
+            threading.Thread(target= grabar, args=(SocketServidor, client)).start()
+
         elif op == b"Conectado":
-            stream.write(data)
-            SocketCliente.send("ok")
-        
+            stream.write(client)
+            SocketCliente.send(b"escuchando")
 
     stream.stop_stream()
     stream.close()
@@ -55,12 +58,13 @@ def grabar(SocketServidor,dest):
                     frames_per_buffer=CHUNK)
   
     while True:
-
+        
         data = stream.read(CHUNK)
+        print(dest)
         enviar = [b"Conectado",dest,data]
         SocketServidor.send_multipart(enviar)
-        SocketServidor.recv()
-        
+        respuestaServer = SocketServidor.recv()
+        print(respuestaServer)
 
     
 
@@ -113,20 +117,13 @@ def main():
                 s.send_multipart(data)
                 s.recv()
 
-            elif act == "audionote":
-                voz = grabar()
-                dest,msg = res[0].split(' ', 2)
-                data = [b"audionote", ec(nick), ec(dest)]
-                s.send_multipart(data+voz)
-                respuesta= s.recv()
-
             elif act == "call":     
                 dest, msg = res[0].split(' ',2)
                 envio = [b"call" , ec(nick), ec(dest)]
                 s.send_multipart(envio)
                 respuesta = s.recv()
                 print(respuesta)
-                #reproducir(s,c)
+                
              
     #threading.Thread(target = reproducir, args = (s, c)).start()
                             

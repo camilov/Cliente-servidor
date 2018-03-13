@@ -47,7 +47,7 @@ def main():
             print(clientes)
     
        if op == b"call":
-            sender, dest,*nothing = msg
+            sender, dest,*n = msg
             s.send(b"ok")
             dataMia = [b"Conectar",dest]
             clientes[sender].send_multipart(dataMia)

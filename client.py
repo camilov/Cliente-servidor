@@ -28,10 +28,7 @@ def reproducir(SocketServidor, SocketCliente):
         op, client =  SocketCliente.recv_multipart()
         if op == b"Conectar":
             SocketCliente.send(b"ok")
-            print("conectando")
-            print(client)
             #grabar(SocketServidor,client)
-            
             threading.Thread(target= grabar, args=(SocketServidor, client)).start()
 
         elif op == b"Conectado":
@@ -60,7 +57,6 @@ def grabar(SocketServidor,dest):
     while True:
         
         data = stream.read(CHUNK)
-        print(dest)
         enviar = [b"Conectado",dest,data]
         SocketServidor.send_multipart(enviar)
         respuestaServer = SocketServidor.recv()
@@ -122,11 +118,7 @@ def main():
                 envio = [b"call" , ec(nick), ec(dest)]
                 s.send_multipart(envio)
                 respuesta = s.recv()
-                print(respuesta)
-                
-             
-    #threading.Thread(target = reproducir, args = (s, c)).start()
-                            
+                print(respuesta)            
                 
 
 if __name__ == '__main__':

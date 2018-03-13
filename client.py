@@ -28,7 +28,8 @@ def reproducir(SocketServidor, SocketCliente):
         op, sender ,dest, *data=  SocketCliente.recv_multipart()
         if op == b"Conectar":
             SocketCliente.send(b"ok")
-            threading.Thread(target= grabar, args=(SocketServidor, dest)).start()
+            grabar(SocketServidor,dest)
+            #threading.Thread(target= grabar, args=(SocketServidor, dest)).start()
         elif op == b"Conectado":
             stream.write(data)
             SocketCliente.send("ok")
@@ -56,9 +57,9 @@ def grabar(SocketServidor,dest):
     while True:
 
         data = stream.read(CHUNK)
-        print(type(data))
         enviar = [b"Conectado",dest,data]
         SocketServidor.send_multipart(enviar)
+        SocketServidor.recv()
         
 
     
@@ -99,12 +100,7 @@ def main():
         sockets  = dict(poller.poll())
 
         if c in sockets:
-            #sender = c.recv_multipart()
-            #c.send(b"ok")
-            #print(sender)
-            #reproducir(audio)
             reproducir(s,c)
-                    
 
         if sys.stdin.fileno() in  sockets:
            
@@ -124,15 +120,15 @@ def main():
                 s.send_multipart(data+voz)
                 respuesta= s.recv()
 
-            elif act == "call":
-                
+            elif act == "call":     
                 dest, msg = res[0].split(' ',2)
                 envio = [b"call" , ec(nick), ec(dest)]
                 s.send_multipart(envio)
                 respuesta = s.recv()
-                reproducir(s,c)
+                print(respuesta)
+                #reproducir(s,c)
              
-    threading.Thread(target = reproducir, args = (s, c)).start()
+    #threading.Thread(target = reproducir, args = (s, c)).start()
                             
                 
 

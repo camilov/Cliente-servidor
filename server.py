@@ -58,15 +58,21 @@ def main():
        if op == b"call":
             sender, dest,*nothing = msg
             s.send(b"ok")
-            data = [b"Conectar",sender,dest]
-            clientes[dest].send_multipart(data)
+            dataMia = [b"Conectar",dest]
+            clientes[sender].send_multipart(dataMia)
+            respuestaMia = clientes[dest].recv()
+            print(respuestaMia)
+            dataCliente = [b"Conectar",sender]
+            clientes[dest].send_multipart(dataCliente)
             respuestaCliente = clientes[dest].recv()
             print(respuestaCliente)
 
        if op == b"Conectado":
             dest, *data = msg
+            print(data)
             s.send(b"ok")
-            clientes[dest].send_multipart(msg)
+            datos = [b"Conectado",dest,data]
+            clientes[dest].send_multipart(data)
             respuesta = clientes[dest].recv()
             print(respuesta)
 if __name__ == '__main__':

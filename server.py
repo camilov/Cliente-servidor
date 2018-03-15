@@ -6,15 +6,6 @@ import math
 def dc(s):
     return s.decode("ascii")
 
-def loadFiles(path):
-    files = {}
-    dataDir = os.fsencode(path)
-    for file in os.listdir(dataDir):
-        filename = os.fsdecode(file)
-        print("loading {}".format(filename))
-        files[filename] = files
-    return files
-        
 def main():
     if len(sys.argv) != 2:
         print("Faltan argumentos");
@@ -66,5 +57,6 @@ def main():
             clientes[dest].send_multipart(datos)
             respuesta = clientes[dest].recv()
             print(respuesta)
+            
 if __name__ == '__main__':
     main()

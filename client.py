@@ -12,11 +12,11 @@ FORMAT = pyaudio.paInt16
 CHANNELS = 2
 RATE = 44100
 RECORD_SECONDS = 5
-WAVE_OUTPUT_FILENAME = "g.wav"
 
 
 
-def reproducir(SocketServidor, SocketCliente):
+
+def reproducir(SocketServidor,SocketCliente):
    
     p = pyaudio.PyAudio()
     stream = p.open(format=FORMAT,
@@ -25,13 +25,13 @@ def reproducir(SocketServidor, SocketCliente):
                     output=True,
                     )
     while True:
-        op, client =  SocketCliente.recv_multipart()
-        if op == b"Conectar":
-            SocketCliente.send(b"ok")
-            #grabar(SocketServidor,client)
-            threading.Thread(target= grabar, args=(SocketServidor, client)).start()
 
-        elif op == b"Conectado":
+        op,client = SocketCliente.recv_multipart()
+        print(client)
+        if op == b"Conectar":
+            SocketCliente.send(b"recibido")
+            threading.Thread(target= grabar, args=(SocketServidor, client)).start()
+        if op == b"Conectado":
             stream.write(client)
             SocketCliente.send(b"escuchando")
 
@@ -55,13 +55,13 @@ def grabar(SocketServidor,dest):
                     frames_per_buffer=CHUNK)
   
     while True:
-        
+                
         data = stream.read(CHUNK)
         enviar = [b"Conectado",dest,data]
         SocketServidor.send_multipart(enviar)
         respuestaServer = SocketServidor.recv()
         print(respuestaServer)
-
+        
     
 
     stream.stop_stream()

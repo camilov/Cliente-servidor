@@ -25,7 +25,6 @@ def reproducir(SocketServidor,SocketCliente):
                     output=True,
                     )
     while True:
-
         op,client = SocketCliente.recv_multipart()
         print(client)
         if op == b"Conectar":
@@ -43,7 +42,7 @@ def reproducir(SocketServidor,SocketCliente):
 
 
 
-def grabar(SocketServidor,dest):
+def grabar(SocketServidor,dest,):
 
 
     p = pyaudio.PyAudio()

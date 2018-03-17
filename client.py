@@ -26,13 +26,13 @@ def reproducir(SocketServidor,SocketCliente):
                     )
     while True:
         op,client = SocketCliente.recv_multipart()
-        print(client)
+        print(client+b" Esta conectado conmigo")
         if op == b"Conectar":
-            SocketCliente.send(b"recibido")
-            threading.Thread(target= grabar, args=(SocketServidor, client)).start()
+            SocketCliente.send(client+b" esta conectado")
+            threading.Thread(target= reproducir, args=(SocketServidor, SocketCliente)).start()
         if op == b"Conectado":
             stream.write(client)
-            SocketCliente.send(b"escuchando")
+            SocketCliente.send(b"Escuchando")
 
     stream.stop_stream()
     stream.close()
@@ -99,8 +99,8 @@ def main():
         sockets  = dict(poller.poll())
 
         if c in sockets:
-            reproducir(s,c)
-
+             #threading.Thread(target= reproducir, args=(s,c)).start()
+             reproducir(s,c)
         if sys.stdin.fileno() in  sockets:
            
             command = input()
@@ -112,13 +112,16 @@ def main():
                 s.send_multipart(data)
                 s.recv()
 
-            elif act == "call":     
+            elif act == "call": 
+
                 dest, msg = res[0].split(' ',2)
-                envio = [b"call" , ec(nick), ec(dest)]
+                envio = [b"call" , ec(nick),ec(dest)]
                 s.send_multipart(envio)
                 respuesta = s.recv()
                 print(respuesta)            
-                
+           
+
+           
 
 if __name__ == '__main__':
     main()

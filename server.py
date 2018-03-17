@@ -35,28 +35,36 @@ def main():
             csocket.connect("tcp://{}:{}".format(dc(clientAddress),dc(clientPort)))
             clientes[nickname] =csocket 
             s.send(b"ok")
-            print(clientes)
+            print("lista de conectados: ")
+            for cliente in clientes:
+                print(cliente)
     
        if op == b"call":
             sender, dest,*n = msg
             s.send(b"ok")
-            dataMia = [b"Conectar",dest]
-            clientes[sender].send_multipart(dataMia)
-            respuestaMia = clientes[sender].recv()
-            print(respuestaMia)
-            dataCliente = [b"Conectar",sender]
-            clientes[dest].send_multipart(dataCliente)
-            respuestaCliente = clientes[dest].recv()
-            print(respuestaCliente)
+            
+            for usuarios in clientes:
+                if usuarios != sender:
+
+                    #dataMia = [b"Conectar",usuarios]
+                    #clientes[sender].send_multipart(dataMia)
+                    #respuestaMia = clientes[sender].recv()
+                    #print(respuestaMia)
+                    dataCliente = [b"Conectar",usuarios]
+                    clientes[usuarios].send_multipart(dataCliente)
+                    respuestaCliente = clientes[usuarios].recv()
+                    print(respuestaCliente)
 
        if op == b"Conectado":
             dest,data = msg
-            s.send(b"recibido")
+            s.send(b"Se encuentran conectados en llamada grupal"+dest)
             print(dest)
             datos = [b"Conectado",data]
             clientes[dest].send_multipart(datos)
             respuesta = clientes[dest].recv()
             print(respuesta)
+            
+       
             
 if __name__ == '__main__':
     main()

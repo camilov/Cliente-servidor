@@ -45,15 +45,17 @@ def main():
             
             for usuarios in clientes:
                 if usuarios != sender:
-
-                    #dataMia = [b"Conectar",usuarios]
-                    #clientes[sender].send_multipart(dataMia)
-                    #respuestaMia = clientes[sender].recv()
-                    #print(respuestaMia)
-                    dataCliente = [b"Conectar",usuarios]
+                    
+                    dataMia = [b"Conectar",usuarios]
+                    clientes[sender].send_multipart(dataMia)
+                    respuestaMia = clientes[sender].recv()
+                    print(respuestaMia)
+                    dataCliente = [b"Conectar",sender]
                     clientes[usuarios].send_multipart(dataCliente)
                     respuestaCliente = clientes[usuarios].recv()
                     print(respuestaCliente)
+                    
+                    
 
        if op == b"Conectado":
             dest,data = msg

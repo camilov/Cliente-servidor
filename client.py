@@ -29,7 +29,7 @@ def reproducir(SocketServidor,SocketCliente):
         print(client+b" Esta conectado conmigo")
         if op == b"Conectar":
             SocketCliente.send(client+b" esta conectado")
-            #threading.Thread(target= grabar, args=(SocketServidor, client)).start()
+            threading.Thread(target= grabar, args=(SocketServidor, client)).start()
         if op == b"Conectado":
             stream.write(client)
             SocketCliente.send(b"Escuchando")
@@ -99,8 +99,9 @@ def main():
         sockets  = dict(poller.poll())
 
         if c in sockets:
-             #threading.Thread(target= reproducir, args=(s,c)).start()
              reproducir(s,c)
+
+             
         if sys.stdin.fileno() in  sockets:
            
             command = input()
@@ -121,7 +122,7 @@ def main():
                 print(respuesta)            
            
 
-           
+              
 
 if __name__ == '__main__':
     main()

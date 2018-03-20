@@ -29,7 +29,7 @@ def reproducir(SocketServidor,SocketCliente):
         print(client+b" Esta conectado conmigo")
         if op == b"Conectar":
             SocketCliente.send(client+b" esta conectado")
-            threading.Thread(target= reproducir, args=(SocketServidor, SocketCliente)).start()
+            #threading.Thread(target= grabar, args=(SocketServidor, client)).start()
         if op == b"Conectado":
             stream.write(client)
             SocketCliente.send(b"Escuchando")

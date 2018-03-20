@@ -43,23 +43,46 @@ def main():
             sender, dest,*n = msg
             s.send(b"ok")
             
-            for usuarios in clientes:
-                if usuarios != sender:
-                    
-                    dataMia = [b"Conectar",usuarios]
+         #camilo,cristian,villegas
+         #sender,usuario,dest
+         #conectados camilo y villegas
+         #
+            for usuario in clientes:
+                if usuario != sender and usuario != dest:
+                    dataMia = [b"Conectar",dest]
                     clientes[sender].send_multipart(dataMia)
                     respuestaMia = clientes[sender].recv()
                     print(respuestaMia)
+
                     dataCliente = [b"Conectar",sender]
-                    clientes[usuarios].send_multipart(dataCliente)
-                    respuestaCliente = clientes[usuarios].recv()
+                    clientes[dest].send_multipart(dataCliente)
+                    respuestaCliente = clientes[dest].recv()
                     print(respuestaCliente)
+
                     
-                    
+                    data = [b"Conectar",sender]
+                    clientes[usuario].send_multipart(data)
+                    respuestaCliente = clientes[usuario].recv()
+                    print(respuestaCliente)
+
+                    data2 = [b"Conectar",dest]
+                    clientes[usuario].send_multipart(data2)
+                    respuestaCliente = clientes[usuario].recv()
+                    print(respuestaCliente)
+
+                    data3 = [b"Conectar",usuario]
+                    clientes[dest].send_multipart(data3)
+                    respuestaCliente = clientes[dest].recv()
+                    print(respuestaCliente)
+
+                    data4 = [b"Conectar",usuario]
+                    clientes[sender].send_multipart(data4)
+                    respuestaCliente = clientes[sender].recv()
+                    print(respuestaCliente)
 
        if op == b"Conectado":
             dest,data = msg
-            s.send(b"Se encuentran conectados en llamada grupal"+dest)
+            s.send(b"Conectados")
             print(dest)
             datos = [b"Conectado",data]
             clientes[dest].send_multipart(datos)

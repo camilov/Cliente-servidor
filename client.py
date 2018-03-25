@@ -113,10 +113,10 @@ def main():
                 s.send_multipart(data)
                 s.recv()
 
-            elif act == "call": 
+            elif act == "callg": 
 
-                dest, msg = res[0].split(' ',2)
-                envio = [b"call" , ec(nick),ec(dest)]
+                group, msg = res[0].split(' ',2)
+                envio = [b"callg" , ec(nick),ec(group)]
                 s.send_multipart(envio)
                 respuesta = s.recv()
                 print(respuesta)            

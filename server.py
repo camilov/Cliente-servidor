@@ -23,6 +23,8 @@ def main():
     
 
     clientes= {}
+    listco = {}
+    listgd = {}
 
     print("server ready")
     while True:
@@ -39,25 +41,51 @@ def main():
             for cliente in clientes:
                 print(cliente)
     
+       
+
+       if op == b"callg":
+            sender, group,*n = msg
+            s.send(b"ok")
+
+            
        if op == b"call":
             sender, dest,*n = msg
             s.send(b"ok")
-            
 
-            for usuario in clientes:
-                print(b"usuario"+usuario)
-                if sender != usuario:
-                    data7 = [b"Conectar",usuario]
-                    clientes[sender].send_multipart(data7)
-                    respuestaCliente = clientes[sender].recv()
-                    for usuario2 in clientes:
-                        print(b"usuario2"+usuario2)
-                        if usuario != usuario2 and usuario != sender:
-                        
-                            data6 = [b"Conectar",usuario2]
-                            clientes[usuario].send_multipart(data6)
-                            respuestaCliente = clientes[usuario].recv()
 
+            if dest == b'grupo':
+                listco[sender] = dc(sender)
+                print("lista conectado1")
+                #for d in listco:
+                #    print(d)
+                for i in listco:
+                    for c in clientes:
+                        if i == c:
+                            data7 = [b"Conectar",c]
+                            clientes[sender].send_multipart(data7)
+
+            elif dest != b'grupo':
+                listgd[sender] = dc (sender)
+                print("lista conectados2 ")
+                for i in listgd:
+                    print(i)
+
+
+
+
+        ##    for usuario in clientes:
+        ##        print(b"usuario"+usuario)
+        ##        if sender != usuario:
+        ##            data7 = [b"Conectar",usuario]
+        ##            clientes[sender].send_multipart(data7)
+        ##            respuestaCliente = clientes[sender].recv()
+        ##            for usuario2 in clientes:
+        ##                print(b"usuario2"+usuario2)
+        #                if usuario != usuario2 and usuario != sender:
+
+        ##                    data6 = [b"Conectar",usuario2]
+        ##                    clientes[usuario].send_multipart(data6)
+        ##                    respuestaCliente = clientes[usuario].recv()
        if op == b"Conectado":
             dest,data = msg
             s.send(b"Conectados")

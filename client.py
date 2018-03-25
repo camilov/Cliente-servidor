@@ -42,7 +42,7 @@ def reproducir(SocketServidor,SocketCliente):
 
 
 
-def grabar(SocketServidor,dest,):
+def grabar(SocketServidor,dest):
 
 
     p = pyaudio.PyAudio()
@@ -54,7 +54,6 @@ def grabar(SocketServidor,dest,):
                     frames_per_buffer=CHUNK)
   
     while True:
-                
         data = stream.read(CHUNK)
         enviar = [b"Conectado",dest,data]
         SocketServidor.send_multipart(enviar)
@@ -113,10 +112,9 @@ def main():
                 s.send_multipart(data)
                 s.recv()
 
-            elif act == "callg": 
-
-                group, msg = res[0].split(' ',2)
-                envio = [b"callg" , ec(nick),ec(group)]
+            elif act == "call": 
+                dest, msg = res[0].split(' ',2)
+                envio = [b"call" , ec(nick),ec(dest)]
                 s.send_multipart(envio)
                 respuesta = s.recv()
                 print(respuesta)            

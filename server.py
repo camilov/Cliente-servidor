@@ -43,16 +43,22 @@ def main():
 
 
        if op == b"call":
-            sender, dest,*n = msg
+            sender, dest,n = msg
             s.send(b"ok")
+            print(n)
 
-            if dest == b'agregar': 
-                    
-                listgd[sender] = dc(sender)
+            if dest == b'agregar' and n == b'grupo': 
+                listgd[sender] = sender
                 print("lista de conectados en tu grupo1")
                 for i in listgd:
                     print(i)
-            if dest == b'grupo':
+            elif dest == b'agregar' and n != b'grupo':
+                listco[sender] = sender
+                print("lista de conectados en tu grupo2")
+                for i in listco:
+                    print(i)
+
+            elif dest == b'grupo':
                 
                 for i in listgd:
                     for c in clientes:
@@ -68,6 +74,22 @@ def main():
                                         clientes[c].send_multipart(data9)
                                         respuesta = clientes[c].recv()
                                         print(respuestaCliente)
+            elif dest != b'grupo':
+                for i in listco:
+                    for c in clientes:
+                        if  i == c and sender != c:
+                            data8 = [b"Conectar",c]
+                            clientes[sender].send_multipart(data8)
+                            respuestaCliente = clientes[sender].recv()
+                            print(respuestaCliente)
+                            for c2 in clientes:
+                                for x in listco:
+                                    if i == c and c != c2 and c2 == x and  c != sender:
+                                        data9 = [b"Conectar",c2]
+                                        clientes[c].send_multipart(data9)
+                                        respuesta = clientes[c].recv()
+                                        print(respuestaCliente)
+
        if op == b"Conectado":
             dest,data = msg
             s.send(b"Conectados")

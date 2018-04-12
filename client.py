@@ -17,8 +17,9 @@ RECORD_SECONDS = 5
 
 
 def reproducir(SocketServidor,SocketCliente):
-   
-    p = pyaudio.PyAudio()
+    
+    p =pyaudio.PyAudio()
+
     stream = p.open(format=FORMAT,
                     channels=CHANNELS,
                     rate=RATE,
@@ -26,19 +27,19 @@ def reproducir(SocketServidor,SocketCliente):
                     )
     while True:
         op,client = SocketCliente.recv_multipart()
-        print(client+b" Esta conectado conmigo")
+        #print(client+b" Esta conectado conmigo")
         if op == b"Conectar":
-            SocketCliente.send(client+b" esta conectado")
+            SocketCliente.send(client)
             threading.Thread(target= grabar, args=(SocketServidor, client)).start()
         if op == b"Conectado":
             stream.write(client)
-            SocketCliente.send(b"Escuchando")
+            SocketCliente.send(b"ok")
 
     stream.stop_stream()
     stream.close()
     p.terminate()
 
-    print("termino")
+    #print("termino")
 
 
 
@@ -58,13 +59,13 @@ def grabar(SocketServidor,dest):
         enviar = [b"Conectado",dest,data]
         SocketServidor.send_multipart(enviar)
         respuestaServer = SocketServidor.recv()
-        print(respuestaServer)
+        #print(respuestaServer)
         
     
 
-    stream.stop_stream()
-    stream.close()
-    p.terminate()
+    #stream.stop_stream()
+    #stream.close()
+    #p.terminate()
 
     
     
@@ -99,6 +100,7 @@ def main():
 
         if c in sockets:
              reproducir(s,c)
+             #threading.Thread(target= reproducir, args=(s, c)).start()
 
              
         if sys.stdin.fileno() in  sockets:
@@ -117,10 +119,9 @@ def main():
                 envio = [b"call" , ec(nick),ec(dest),ec(msg)]
                 s.send_multipart(envio)
                 respuesta = s.recv()
-                print(respuesta)            
+                #print(respuesta)            
            
 
-              
-
+        
 if __name__ == '__main__':
     main()
